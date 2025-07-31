@@ -1,0 +1,82 @@
+name: walkie
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  
+  # Navigation
+  go_router: ^14.8.0
+  
+  # HTTP Client
+  dio: ^5.8.0
+  pretty_dio_logger: ^1.4.0
+  
+  # Location Services
+  geolocator: ^13.0.2
+  
+  # Permissions
+  permission_handler: ^11.3.1
+  
+  # Health
+  health: ^13.1.1
+  
+  # Local Storage
+  shared_preferences: ^2.3.4
+  
+  # Utilities
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  equatable: ^2.0.5
+  
+  # UI
+  flutter_screenutil: ^5.9.0
+  flutter_svg: ^2.0.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  
+  # Code Generation
+  build_runner: ^2.4.14
+  freezed: ^2.5.0
+  json_serializable: ^6.9.2
+  riverpod_generator: ^2.6.3
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - lib/assets/
+  
+  fonts:
+    - family: SUIT
+      fonts:
+        - asset: lib/assets/SUIT-ttf/SUIT-Thin.ttf
+          weight: 100
+        - asset: lib/assets/SUIT-ttf/SUIT-ExtraLight.ttf
+          weight: 200
+        - asset: lib/assets/SUIT-ttf/SUIT-Light.ttf
+          weight: 300
+        - asset: lib/assets/SUIT-ttf/SUIT-Regular.ttf
+          weight: 400
+        - asset: lib/assets/SUIT-ttf/SUIT-Medium.ttf
+          weight: 500
+        - asset: lib/assets/SUIT-ttf/SUIT-SemiBold.ttf
+          weight: 600
+        - asset: lib/assets/SUIT-ttf/SUIT-Bold.ttf
+          weight: 700
+        - asset: lib/assets/SUIT-ttf/SUIT-ExtraBold.ttf
+          weight: 800
+        - asset: lib/assets/SUIT-ttf/SUIT-Heavy.ttf
+          weight: 900

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub:*)",
+      "Bash(pod install:*)",
+      "WebFetch(domain:www.figma.com)",
+      "Bash(flutter clean:*)",
+      "Bash(rm:*)",
+      "Bash(flutter build:*)",
+      "Bash(pod deintegrate:*)",
+      "Bash(pod cache clean:*)",
+      "Bash(pod:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(sudo gem update:*)",
+      "Bash(gem update:*)",
+      "Bash(gem list:*)",
+      "Bash(brew:*)",
+      "Bash(brew upgrade:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter:*)"
+    ],
+    "deny": []
+  }
+}
