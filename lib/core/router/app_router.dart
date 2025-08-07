@@ -10,7 +10,9 @@ import '../../presentation/pages/always_location_page.dart';
 import '../../presentation/pages/profile_page.dart';
 import '../../presentation/pages/profile_image_select_page.dart';
 import '../../presentation/pages/profile_gender_page.dart';
+import '../../presentation/pages/profile_year_page.dart';
 import '../../presentation/pages/profile_location_page.dart';
+import '../../presentation/pages/profile_location_search_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -62,15 +64,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ProfileGenderPage(),
       ),
       GoRoute(
+        path: '/profile-year',
+        name: 'profile-year',
+        builder: (context, state) => ProfileYearPage(),
+      ),
+      GoRoute(
         path: '/profile-location',
         name: 'profile-location',
         builder: (context, state) => const ProfileLocationPage(),
       ),
-    ],
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('Page not found: ${state.uri}'),
+      GoRoute(
+        path: '/profile-location-search',
+        name: 'profile-location-search',
+        builder: (context, state) => const ProfileLocationSearchPage(),
       ),
-    ),
+    ],
+    errorBuilder: (context, state) =>
+        Scaffold(body: Center(child: Text('Page not found: ${state.uri}'))),
   );
 });

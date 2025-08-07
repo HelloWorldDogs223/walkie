@@ -42,7 +42,7 @@ class _SplashPageState extends State<SplashPage> {
       backgroundColor: const Color(0xFF2750E0), // Fixed: Changed from 0x00 (transparent) to 0xFF (opaque)
       body: Center(
         child: SvgPicture.asset(
-          'lib/assets/Logo.svg',
+          'assets/Logo.svg',
           width: 252,
           height: 65,
           placeholderBuilder: (BuildContext context) => Container(

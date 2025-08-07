@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
                         width: 24,
                         height: 24,
                         child: Image.asset(
-                          'lib/assets/kakao.png',
+                          'assets/kakao.png',
                           width: 24,
                           height: 24,
                         ),
@@ -98,7 +98,7 @@ class LoginPage extends StatelessWidget {
                         width: 24,
                         height: 24,
                         child: Image.asset(
-                          'lib/assets/naver.png',
+                          'assets/naver.png',
                           width: 24,
                           height: 24,
                         ),
@@ -132,7 +132,7 @@ class LoginPage extends StatelessWidget {
                         width: 24,
                         height: 24,
                         child: Image.asset(
-                          'lib/assets/google.png',
+                          'assets/google.png',
                           width: 24,
                           height: 24,
                         ),

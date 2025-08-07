@@ -1,161 +1,148 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/signup_provider.dart';
 
-class ProfileGenderPage extends StatefulWidget {
+class ProfileGenderPage extends ConsumerWidget {
   const ProfileGenderPage({super.key});
 
   @override
-  State<ProfileGenderPage> createState() => _ProfileGenderPageState();
-}
-
-class _ProfileGenderPageState extends State<ProfileGenderPage> {
-  String? selectedGender;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signupData = ref.watch(signupNotifierProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.chevron_left, color: Colors.black, size: 30),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          '성별 선택',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              const Text(
-                '성별을 선택해주세요',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                '맞춤형 서비스 제공을 위해 필요합니다',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 60),
-              _buildGenderOption('남성', Icons.male),
-              const SizedBox(height: 16),
-              _buildGenderOption('여성', Icons.female),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: selectedGender != null
-                      ? () {
-                          context.push('/profile-location');
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedGender != null 
-                        ? Colors.blue 
-                        : Colors.grey[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                  ),
-                  child: Text(
-                    '계속하기',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: selectedGender != null 
-                          ? Colors.white 
-                          : Colors.grey[600],
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        // Progress Indicator
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(4, (index) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: index == 1
+                                    ? Colors.blue.shade800
+                                    : Colors.grey[300],
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 60),
+                        const Text(
+                          '성별을 입력해주세요',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 80),
+                        Center(
+                          child: Column(
+                            children: [
+                              _buildGenderOption('남성', ref, context),
+                              const SizedBox(height: 16),
+                              _buildGenderOption('여성', ref, context),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-            ],
+                // Bottom button
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  child: SizedBox(
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: signupData.selectedGender != null
+                          ? () {
+                              context.push('/profile-year');
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade800,
+                        disabledBackgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        '다음',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildGenderOption(String gender, IconData icon) {
-    final isSelected = selectedGender == gender;
-    
+  Widget _buildGenderOption(
+    String gender,
+    WidgetRef ref,
+    BuildContext context,
+  ) {
+    final signupData = ref.watch(signupNotifierProvider);
+    final isSelected = signupData.selectedGender == gender;
+
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedGender = gender;
-        });
+        ref.read(signupNotifierProvider.notifier).updateGender(gender);
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: 56,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? Colors.blue.shade50 : Colors.white,
+          borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.transparent,
-            width: 2,
+            color: isSelected ? Colors.blue.shade800 : Colors.grey[300]!,
+            width: isSelected ? 2 : 1,
           ),
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.blue : Colors.grey[300],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 28,
-              ),
+        child: Center(
+          child: Text(
+            gender,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.blue.shade800 : Colors.grey[600],
             ),
-            const SizedBox(width: 16),
-            Text(
-              gender,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.blue : Colors.black87,
-              ),
-            ),
-            const Spacer(),
-            if (isSelected)
-              Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );

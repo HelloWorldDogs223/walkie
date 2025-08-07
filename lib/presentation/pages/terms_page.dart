@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/utils/permission_service.dart';
 
 class TermsPage extends StatefulWidget {
   const TermsPage({super.key});
@@ -54,7 +53,7 @@ class _TermsPageState extends State<TermsPage> {
                     const SizedBox(height: 40),
                     // 캐릭터 이미지
                     Image.asset(
-                      'lib/assets/character.png',
+                      'assets/character.png',
                       width: 120,
                       height: 120,
                     ),
@@ -81,20 +80,18 @@ class _TermsPageState extends State<TermsPage> {
                       ],
                     ),
                     const SizedBox(height: 48),
+                    // 구분선
+                    const Divider(
+                      color: Colors.grey,
+                      thickness: 0.5,
+                      height: 32,
+                    ),
                     // 전체 동의
                     InkWell(
                       onTap: () => _toggleAll(!_agreeAll),
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey[200]!),
-                        ),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         child: Row(
                           children: [
                             SizedBox(
@@ -120,7 +117,7 @@ class _TermsPageState extends State<TermsPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     // 개별 약관들
                     _buildTermsItem('만 14세 이상입니다.', _agreeAge, (value) {
                       setState(() {
@@ -223,6 +220,145 @@ class _TermsPageState extends State<TermsPage> {
     );
   }
 
+  void _showTermsBottomSheet(BuildContext context, String title) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(Icons.close, size: 24),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF4285F4),
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            '워키 이용을 위해\n약관에 동의해주세요',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      '이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      '이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      '이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다. 이용약관에 대한 설명을 작성합니다.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF4285F4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  child: const Text(
+                    '확인',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildTermsItem(
     String title,
     bool value,
@@ -231,39 +367,58 @@ class _TermsPageState extends State<TermsPage> {
     bool hasArrow = false,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () => onChanged(!value),
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: Checkbox(
-                  value: value,
-                  onChanged: onChanged,
-                  activeColor: Color(0xFF4285F4),
-                  shape: CircleBorder(),
+      margin: const EdgeInsets.only(bottom: 4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
+          children: [
+            // 체크박스와 텍스트 영역
+            Expanded(
+              child: InkWell(
+                onTap: () => onChanged(!value),
+                borderRadius: BorderRadius.circular(8),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Checkbox(
+                        value: value,
+                        onChanged: onChanged,
+                        activeColor: Color(0xFF4285F4),
+                        shape: CircleBorder(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.w500,
+            ),
+            // 화살표 영역 (별도 클릭 처리)
+            if (hasArrow)
+              InkWell(
+                onTap: () => _showTermsBottomSheet(context, title),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey[400],
+                    size: 20,
                   ),
                 ),
               ),
-              if (hasArrow)
-                Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
-            ],
-          ),
+          ],
         ),
       ),
     );

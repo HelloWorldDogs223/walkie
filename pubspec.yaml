@@ -16,7 +16,7 @@ dependencies:
   
   # Navigation
   go_router: ^14.8.0
-  
+  flutter_naver_map:
   # HTTP Client
   dio: ^5.8.0
   pretty_dio_logger: ^1.4.0
@@ -29,6 +29,7 @@ dependencies:
   
   # Health
   health: ^13.1.1
+  pedometer: ^4.1.1
   
   # Local Storage
   shared_preferences: ^2.3.4
@@ -41,6 +42,16 @@ dependencies:
   # UI
   flutter_screenutil: ^5.9.0
   flutter_svg: ^2.0.10
+  
+  # Image Picker
+  image_picker: ^1.1.2
+  
+  # Dropdown
+  dropdown_button2: ^2.3.9
+  
+  # Environment Variables
+  flutter_dotenv: ^5.1.0
+  sensors_plus: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -57,26 +68,27 @@ flutter:
   uses-material-design: true
   
   assets:
-    - lib/assets/
+    - assets/
+    - .env
   
   fonts:
     - family: SUIT
       fonts:
-        - asset: lib/assets/SUIT-ttf/SUIT-Thin.ttf
+        - asset: assets/SUIT-ttf/SUIT-Thin.ttf
           weight: 100
-        - asset: lib/assets/SUIT-ttf/SUIT-ExtraLight.ttf
+        - asset: assets/SUIT-ttf/SUIT-ExtraLight.ttf
           weight: 200
-        - asset: lib/assets/SUIT-ttf/SUIT-Light.ttf
+        - asset: assets/SUIT-ttf/SUIT-Light.ttf
           weight: 300
-        - asset: lib/assets/SUIT-ttf/SUIT-Regular.ttf
+        - asset: assets/SUIT-ttf/SUIT-Regular.ttf
           weight: 400
-        - asset: lib/assets/SUIT-ttf/SUIT-Medium.ttf
+        - asset: assets/SUIT-ttf/SUIT-Medium.ttf
           weight: 500
-        - asset: lib/assets/SUIT-ttf/SUIT-SemiBold.ttf
+        - asset: assets/SUIT-ttf/SUIT-SemiBold.ttf
           weight: 600
-        - asset: lib/assets/SUIT-ttf/SUIT-Bold.ttf
+        - asset: assets/SUIT-ttf/SUIT-Bold.ttf
           weight: 700
-        - asset: lib/assets/SUIT-ttf/SUIT-ExtraBold.ttf
+        - asset: assets/SUIT-ttf/SUIT-ExtraBold.ttf
           weight: 800
-        - asset: lib/assets/SUIT-ttf/SUIT-Heavy.ttf
+        - asset: assets/SUIT-ttf/SUIT-Heavy.ttf
           weight: 900

@@ -17,7 +17,14 @@
       "Bash(brew:*)",
       "Bash(brew upgrade:*)",
       "Bash(flutter run:*)",
-      "Bash(flutter:*)"
+      "Bash(flutter:*)",
+      "WebFetch(domain:pub.dev)",
+      "Bash(dart run:*)",
+      "Bash(mv:*)",
+      "Bash(xcrun simctl location:*)",
+      "WebFetch(domain:velog.io)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

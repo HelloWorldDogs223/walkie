@@ -42,7 +42,7 @@ class FirstScreenPage extends StatelessWidget {
                 const SizedBox(height: 20),
                 _buildPermissionItem(
                   iconWidget: Image.asset(
-                    'lib/assets/footprintIcon.png',
+                    'assets/footprintIcon.png',
                     width: 24,
                     height: 24,
                   ),
@@ -52,7 +52,7 @@ class FirstScreenPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildPermissionItem(
                   iconWidget: Image.asset(
-                    'lib/assets/locationIcon.png',
+                    'assets/locationIcon.png',
                     width: 24,
                     height: 24,
                   ),
@@ -62,7 +62,7 @@ class FirstScreenPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildPermissionItem(
                   iconWidget: Image.asset(
-                    'lib/assets/BatteryIcon.png',
+                    'assets/BatteryIcon.png',
                     width: 24,
                     height: 24,
                   ),
@@ -153,7 +153,7 @@ class FirstScreenPage extends StatelessWidget {
                         final criticalPermissionsMissing =
                             !locationGranted ||
                             !sensorsGranted ||
-                            (!batteryOptimizationGranted && Platform.isAndroid);
+                            (batteryOptimizationGranted && Platform.isAndroid);
 
                         if (criticalPermissionsMissing) {
                           // 중요 권한이 거부된 경우만 설정 안내
@@ -162,7 +162,7 @@ class FirstScreenPage extends StatelessWidget {
                           if (!sensorsGranted) {
                             missingPermissions.add('동작 및 피트니스');
                           }
-                          if (!batteryOptimizationGranted &&
+                          if (batteryOptimizationGranted &&
                               Platform.isAndroid) {
                             missingPermissions.add('배터리 최적화 제외');
                           }

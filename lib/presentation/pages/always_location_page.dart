@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../core/utils/permission_service.dart';
 
 class AlwaysLocationPage extends StatelessWidget {
   const AlwaysLocationPage({super.key});
