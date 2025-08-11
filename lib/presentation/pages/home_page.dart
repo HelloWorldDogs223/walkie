@@ -49,6 +49,40 @@ class _HomePageState extends ConsumerState<HomePage> {
   // 경로 추적 관련
   List<NLatLng> _walkingPath = [];
   NPathOverlay? _pathOverlay;
+  
+  // 일일 데이터 초기화
+  Future<void> _resetDailyData() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // 운동 데이터 초기화
+    await prefs.remove('paused_step_count');
+    await prefs.remove('total_distance');
+    await prefs.remove('timer_start_time');
+    await prefs.remove('timer_total_paused');
+    await prefs.remove('timer_pause_start_time');
+    await prefs.remove('timer_was_paused');
+    
+    // 상태 초기화
+    setState(() {
+      _stepCount = 0;
+      _pausedStepCount = 0;
+      _totalDistance = 0.0;
+      _totalCalories = 0.0;
+      _startTime = DateTime.now(); // 타이머 재시작
+      _totalPausedDuration = Duration.zero;
+      _pauseStartTime = null;
+      _restStartTime = null;
+      isPaused = false;
+    });
+    
+    // 경로 초기화
+    _clearWalkingPath();
+    
+    // 가속도계 걸음수 리셋
+    HealthService.resetQuickStepCount();
+    
+    debugPrint('일일 데이터 초기화 완료');
+  }
 
   // 테스트용 시뮬레이션
   Timer? _simulationTimer;
@@ -72,7 +106,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   Future<void> _initializeApp() async {
     await _loadSavedData();
-    await _loadSavedPath();
+    // _loadSavedPath()는 onMapReady에서 호출하므로 여기서는 제거
     await _initLocation();
     await _initHealthTracking();
     _startTimer();
@@ -81,6 +115,19 @@ class _HomePageState extends ConsumerState<HomePage> {
   // 데이터 저장/로드
   Future<void> _loadSavedData() async {
     final prefs = await SharedPreferences.getInstance();
+    
+    // 저장된 날짜 확인
+    final savedDateStr = prefs.getString('last_saved_date');
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    
+    // 날짜가 다르면 데이터 초기화
+    if (savedDateStr != today) {
+      debugPrint('날짜 변경 감지: $savedDateStr -> $today. 데이터 초기화');
+      await _resetDailyData();
+      await prefs.setString('last_saved_date', today);
+      return;
+    }
+    
     _pausedStepCount = prefs.getInt('paused_step_count') ?? 0;
     _totalDistance = prefs.getDouble('total_distance') ?? 0.0;
     await _loadTimerState();
@@ -115,6 +162,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('paused_step_count', _stepCount);
     await prefs.setDouble('total_distance', _totalDistance);
+    // 현재 날짜 저장
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    await prefs.setString('last_saved_date', today);
     await _saveTimerState();
   }
 
@@ -185,11 +235,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     final today = DateTime.now().toIso8601String().substring(0, 10);
     final pathKey = 'walking_path_$today';
 
-    // 메모리 최적화: 최대 1000개 지점으로 제한
+    // 메모리 최적화: 최대 10000개 지점으로 제한
     List<NLatLng> pathToSave = _walkingPath;
-    if (pathToSave.length > 1000) {
-      // 균등하게 샘플링하여 1000개로 축소
-      final step = pathToSave.length / 1000;
+    if (pathToSave.length > 10000) {
+      // 균등하게 샘플링하여 10000개로 축소
+      final step = pathToSave.length / 10000;
       pathToSave = [];
       for (int i = 0; i < _walkingPath.length; i += step.ceil()) {
         pathToSave.add(_walkingPath[i]);
@@ -266,20 +316,24 @@ class _HomePageState extends ConsumerState<HomePage> {
             _stepCount,
             distanceInMeters: _totalDistance,
           );
+          // _lastPosition을 여기서만 업데이트 (5미터 이상 이동했을 때만)
+          _lastPosition = position;
         });
         await _saveData();
 
         // 경로에 새로운 위치 추가
         _addToWalkingPath(NLatLng(position.latitude, position.longitude));
+        
+        debugPrint('거리 업데이트: ${distance.toStringAsFixed(1)}m 추가, 총 ${_totalDistance.toStringAsFixed(1)}m');
       }
+    } else if (_lastPosition == null) {
+      // 첫 위치 설정
+      _lastPosition = position;
     }
 
     setState(() {
       _currentPosition = position;
-      _lastPosition = position;
     });
-
-    debugPrint('위치 업데이트: ${position.latitude}, ${position.longitude}');
 
     await _updateMapMarker(position);
   }
@@ -720,8 +774,10 @@ class _HomePageState extends ConsumerState<HomePage> {
             onMapReady: (controller) async {
               _mapController = controller;
 
-              // 저장된 경로가 있으면 다시 그리기
+              // 경로를 다시 로드하고 그리기 (맵이 준비된 후)
+              await _loadSavedPath();
               if (_walkingPath.isNotEmpty) {
+                debugPrint('맵 준비 완료: 경로 그리기 (${_walkingPath.length}개 지점)');
                 await _updatePathOverlay();
               }
 
@@ -768,42 +824,103 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
 
-          // 테스트 시뮬레이션 버튼 (개발용)
+          // 테스트 버튼들 (개발용)
           Positioned(
             top: 0,
             right: 0,
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(right: 20, top: 10),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: _isSimulationRunning ? Colors.red : Colors.green,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                child: Row(
+                  children: [
+                    // 데이터 초기화 버튼
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      _isSimulationRunning ? Icons.stop : Icons.play_arrow,
-                      size: 18,
-                      color: Colors.white,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.refresh,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          // 확인 다이얼로그 표시
+                          final shouldReset = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('데이터 초기화'),
+                              content: const Text('모든 운동 데이터를 초기화하시겠습니까?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: const Text('취소'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('초기화'),
+                                ),
+                              ],
+                            ),
+                          );
+                          
+                          if (shouldReset == true) {
+                            await _resetDailyData();
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('데이터가 초기화되었습니다'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
                     ),
-                    onPressed: () {
-                      if (_isSimulationRunning) {
-                        _stopWalkingSimulation();
-                      } else {
-                        _startWalkingSimulation();
-                      }
-                      setState(() {});
-                    },
-                  ),
+                    const SizedBox(width: 8),
+                    // 시뮬레이션 버튼
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: _isSimulationRunning ? Colors.red : Colors.green,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          _isSimulationRunning ? Icons.stop : Icons.play_arrow,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          if (_isSimulationRunning) {
+                            _stopWalkingSimulation();
+                          } else {
+                            _startWalkingSimulation();
+                          }
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
